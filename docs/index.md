@@ -1,6 +1,6 @@
 # Starlink_fix overview
 
-These pages describe various ways to use Starlink for obtaining a position fix in GPS-denied environments. The page and programs are oriented toward cruising
+These pages describe various ways to use Starlink for obtaining a position fix in GPS-denied environments. The pages and programs are oriented toward cruising
 sailboats.
 
 # Background
@@ -10,7 +10,24 @@ Starlink Datahub GPS positioning discussion have joined and likely missed
 some of the earlier
 messages. This website is intended as a reference to bring them up to speed.
 
-## PredictWind
+### Finn's Starlink -> OpenCPN project
+
+Finn (member of the Starlink datahub positioning discussion WhatsApp
+group) has shared a GitHub archive that will allow a computer (laptop,
+raspberry pi, etc.) to run a program that extracts the starlink position
+and provides it to other Nav programs (OpenCPN for example). This does
+not require a datahub.
+
+### Signalk alerting project
+
+A krafty kiwi krew member on Wild Orchid is working on a program that can
+pull starlink and NMEA positions from signalk and compare them and send
+an alert when the two gps sources disagree by a significant amount. This
+alert could trigger you to switch from your standard chartplotter gps
+source to either a datahub with starlink or OpenCPN. This program requires
+a computer that runs signalk and has access to your NMEA network.
+
+### PredictWind
 
 PredictWind is working on new release for their datahub that can read
 the starlink position information and provide that as a source on a NMEA
@@ -19,23 +36,6 @@ to use that with our chartplotters in the event we encounter denial of
 standard GPS due to jamming or spoofing or any other GPS outage. Bruce
 (Wild Orchid) volunteered to be their initial test and that will hopefully
 happen in the next few days.
-
-## Finn's Starlink -> OpenCPN project
-
-Finn (member of the Starlink datahub positioning discussion WhatsApp
-group) has shared a GitHub archive that will allow a computer (laptop,
-raspberry pi, etc.) to run a program that extracts the starlink position
-and provides it to other Nav programs (OpenCPN for example). This does
-not require a datahub.
-
-## Signalk alerting project
-
-A krafty kiwi krew member on Wild Orchid is working on a program that can
-pull starlink and NMEA positions from signalk and compare them and send
-an alert when the two gps sources disagree by a significant amount. This
-alert could trigger you to switch from your standard chartplotter gps
-source to either a datahub with starlink or OpenCPN. This program requires
-a computer that runs signalk and has access to your NMEA network.
 
 # Capabilities
 
@@ -96,5 +96,6 @@ you'll be more powerful, and be able to contribute to the happiness of your
 fellow cruisers.
 
 # Future sections
+
 1. Signalk setup
 2. FAQ
