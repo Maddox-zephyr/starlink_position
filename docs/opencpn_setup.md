@@ -1,11 +1,12 @@
-# OpenCPN Starlink setup
+# Starlink->OpenCPN setup
 
 Using OpenCPN with Starlink involves setting up a bridge
 that forwards Starlink's location data to OpenCPN.
-Here is a step by step guide for configuring the OpenCPN-Starlink bridge
+Here is a step by step guide for configuring the Starlink->OpenCPN
+bridge.
 
-All the following steps must be done on the computer (Windows or Linux) that you
-are going to run the OpenCPN-Starlink software on.
+All the following steps must be done on the computer (Windows or Linux)
+that you are going to run the OpenCPN-Starlink software on.
 
 ## Prerequisites
 
@@ -25,11 +26,12 @@ download the zip file to your computer
 ## Configure the Starlink->OpenCPN bridge software
 
 - Open PowerShell. (You can search for PowerShell on your
-computer - it should be pre installed.)
-- **cd** into the starlink-grpc-tools-main folder by entering the path
+computer - it should be pre-installed.)
+- **cd** into the starlink-grpc-tools-main folder that is inside
+the Starlink_data_to_NMEA folder by entering the path
 to the folder into powershell like so:
 ```
-cd C:\Users\...\starlink-grpc-tools-main
+cd C:\Users\...Starlink_data_to_NMEA\starlink-grpc-tools-main
 ```
 - Install the dependencies by entering the following command into Powershell:
 ```
@@ -75,5 +77,4 @@ your boat there.
  
 This script sets the SOG to 0 if SOG is below 0.3
 knots. This is to ensure that you dont have a speed and heading
-displayed while at anchor due to an inacurate position. You can change
-this in the Code.
+displayed while at anchor. You can change this in the code.
