@@ -43,7 +43,9 @@ happen in the next few days.
 
 Two main capabilities are described in these pages:
 
-1. **OpenCPN:** Convert Starlink location data to NMEA messages and pipe them into OpenCPN. Use OpenCPN for navigation based on Starlink location. This should bypass
+1. **Starlink->OpenCPN:** Convert Starlink location data to NMEA messages
+and pipe them into OpenCPN. Use OpenCPN for navigation based on
+Starlink location. This should bypass
 GPS, and should help if GPS is unavailable or spoofed.
 
 2. **GPS Loss-Alerting:** Detect when Starlink location differs from the
@@ -67,7 +69,7 @@ installation may be needed.
 Follow the instructions at [this page](starlink_setup.html) to configure your
 Starlink antenna to make its data available on the local network.
 
-# OpenCPN setup
+# Starlink->OpenCPN setup
 
 Follow the instructions at [this page](opencpn_setup.html) to configure your
 Starlink location data to be forwarded to OpenCPN
