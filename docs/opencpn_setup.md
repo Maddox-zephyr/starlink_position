@@ -11,7 +11,6 @@ that you are going to run the OpenCPN-Starlink software on.
 ## Prerequisites
 
 Make sure you have python installed (a quick google search should help)
-and allow local location access in Starlink. 
 
 Make sure you have enabled location access on the Starlink antenna by
 following the steps on [this page](https://maddox-zephyr.github.io/starlink_position/starlink_setup.html)

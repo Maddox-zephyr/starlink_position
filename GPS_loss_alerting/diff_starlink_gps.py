@@ -74,7 +74,7 @@ async def subscribe_with_source():
                                 slink_lat_deg, slink_lat_min = dd_to_dm(starlink_lat)
                                 slink_lon_deg, slink_lon_min = dd_to_dm(starlink_lon)
 
-                                print(f'Starlink Position: {slink_lat_deg}° {slink_lat_min:.3f}\' , {slink_lon_deg}° {slink_lon_min:.3f}\'  GPS delta: {slink_gps_delta:.2f} miles')
+                                print(f'Starlink Position: {slink_lat_deg}° {slink_lat_min:.3f}\' , {slink_lon_deg}° {slink_lon_min:.3f}\'  GPS delta: {slink_gps_delta:.1f} miles')
 
                                 #print ("Starlink Lat: ", starlink_lat, "Lon: ", starlink_lon)
                                 #print ("GPS Lat: ", gps_lat, "Lon: ", gps_lon)
