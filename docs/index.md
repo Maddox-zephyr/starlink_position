@@ -11,31 +11,58 @@ repository for important documentation and software that will not be visible
 to those who join the WhatsApp group after some post has been made. It
 is a place for anyone to get the relevant info at any time.
 
-# Background
+# Purpose
 
 Many new members of the Cruiser Connect community, and especially the
 Starlink Datahub GPS positioning discussion have joined and likely missed
 some of the earlier messages. This website is intended as a reference
 to bring them up to speed.
 
-### PredictWind Datahub
+# Using Starlink position data
+
+Here are the four major approaches to using Starlink location data.
+
+### PredictWind Datahub -> Chartplotter or OpenCPN
 
 PredictWind is finalizing a plugin release for their Datahub that can read
 starlink position information and provide that as a source on a NMEA
-2000 network (or SeatalkNG network). This gives us a choice to use that
-with our chartplotters in the event we encounter denial of standard GPS
-due to jamming or spoofing or any other GPS outage. Bruce (Wild Orchid)
-has tested it on a Raymarine Axiom Pro. Rui (Anne Charlotte) has tested
-it on an older Raymarine E120 (Wide) Classic, and also with OpenCPN.
+2000 network (or SeatalkNG network). (The Datahub also publishes NMEA0183
+over UDP and TCP on a wifi network.)
+
+The Datahub converts Starlink location data to NMEA messages and you pipe
+them into a Raymarine chartplotter or OpenCPN.  Use the chartplotter or
+OpenCPN for navigation based on Starlink location. This should bypass GPS,
+and should help if GPS is unavailable or spoofed.
+
+Bruce (Wild Orchid) has tested it on a Raymarine Axiom Pro. Rui (Anne
+Charlotte) has tested it on an older Raymarine E120 (Wide) Classic,
+and also with OpenCPN.
+
+### Starlink -> Signalk -> OpenCPN
+
+The original configuration that spawned all the others.  Using SignalK +
+Signalk-Starlink plugin allows you to easily (no programming at all)
+broadcast your position to OpenCPN (which already has a connection
+specific for SignalK). It's very easy to setup, and usable in an
+emergency.  It's easy enough for most (even non-techy users) that
+don’t have a DataHub. A downside is the position updates are not very
+smooth.  Signalk uses its plugin that reads Starlink location data and
+re-publishes it.
 
 ### Finn's Starlink -> OpenCPN project
 
 Finn (member of the Starlink datahub positioning discussion WhatsApp
 group) has shared a GitHub archive that will allow a computer (laptop,
 raspberry pi, etc.) to run a program that extracts the starlink position
-and provides it to other Nav programs (OpenCPN for example). This does
-not require a PredictWind Datahub, so would be a useful option for
-cruisers who do not have a Datahub.
+and provides it to other Nav programs (OpenCPN for example). This does not
+require a PredictWind Datahub or Signalk, so would be a useful option for
+cruisers who do not have a Datahub or Signalk. It does require getting
+your hands a bit dirty with python configuration.
+
+Finn's python scripts convert Starlink location data to NMEA messages,
+and you pipe them into OpenCPN.  You then use OpenCPN for navigation
+based on Starlink location. This should bypass GPS, and should help if
+GPS is unavailable or spoofed.
 
 ### GPS loss-alerting project
 
@@ -43,42 +70,31 @@ A krafty kiwi krew member on Wild Orchid is working on a program that can
 pull starlink and NMEA positions from signalk and compare them and send
 an alert when the two gps sources disagree by a significant amount. This
 alert could trigger you to switch from your standard chartplotter gps
-source to either a datahub with starlink or OpenCPN. This program requires
+source to an alternate way of getting location data into your
+chartplotter or OpenCPN. This program requires
 a computer that runs signalk and has access to your NMEA network.
 
-# Capabilities
-
-Three main capabilities are described in these pages:
-
-1. **Starlink->PredictWind Datahub->Raymarine chartplotter or OpenCPN:** 
-Convert Starlink location data to NMEA messages and pipe them into
-a Raymarine chartplotter or OpenCPN.
-Use the chartplotter or OpenCPN for navigation based on
-Starlink location. This should bypass
-GPS, and should help if GPS is unavailable or spoofed.
-
-2. **Starlink->OpenCPN:** Convert Starlink location data to NMEA messages
-using a python program, and pipe them into OpenCPN.
-Use OpenCPN for navigation based on
-Starlink location. This should bypass
-GPS, and should help if GPS is unavailable or spoofed.
-
-3. **GPS Loss-Alerting:** Detect when Starlink location differs from the
-GPS location, or when Starlink or GPS location becomes unavailable (data
-timeout). Send an email alert.  This should help warn a cruiser that they
-need to switch to alternate location source, such as using option 1. This
+It will also detect when Starlink or GPS location becomes unavailable
+(data timeout). It will send an email alert. This should help warn a
+cruiser that they need to switch to alternate navigation solution. This project
 is a work in progress - as of now there is a program which compares the
 Starlink position to the GPS position and prints the Starlink position
 and offset from GPS.
 
 # Starlink setup
 
-All these capabilities rely on the Starlink antenna making its position
-data available on the local network. Depending on the flow, other
+All these capabilities that use Starlink position data rely 
+on the Starlink antenna making its position
+data available on the local network. Depending on the capability, other
 configuration or software installation may be needed.
 
 Follow the instructions at [this page](starlink_setup.html) to configure your
 Starlink antenna to make its data available on the local network.
+
+On the Starlink location data page in the app, it is crucial to also
+select the option “Use Starlink Positioning Exclusively”, when
+switching to navigate using Starlink position data, otherwise it will
+also be (or could be) affected by the GPS jamming
 
 # Starlink->PredictWind Datahub->Chartplotter or OpenCPN setup
 
@@ -86,10 +102,15 @@ Follow the instructions at [this page](pw_datahub_setup.html) to configure your
 Starlink location data to be forwarded via PredictWind's Datahub to your
 chartplotter or OpenCPN
 
-# Starlink->OpenCPN setup
+# Starlink->Signalk->OpenCPN setup
 
-Follow the instructions at [this page](opencpn_setup.html) to configure your
-Starlink location data to be forwarded to OpenCPN
+Follow the instructions at [this page](signalk_opencpn_setup.html)
+to configure Signalk and OpenCPN to use Starlink data.
+
+# Starlink->Finn's python scripts -> OpenCPN setup
+
+Follow the instructions at [this page](opencpn_setup.html) to configure the
+python scripts to forward Starlink location data to OpenCPN
 
 # GPS Loss-Alerting setup
 
