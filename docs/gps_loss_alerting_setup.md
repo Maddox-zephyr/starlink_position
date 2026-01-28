@@ -57,12 +57,12 @@ python diff_starlink_gps.py
 ```
 It should display something like:
 ```
-python diff_starlink_gps.py 
-Starlink Position: 4° 7.295' , 73° 27.883'  GPS delta: 0.00 miles
-Starlink Position: 4° 7.295' , 73° 27.883'  GPS delta: 0.00 miles
-Starlink Position: 4° 7.295' , 73° 27.883'  GPS delta: 0.00 miles
-Starlink Position: 4° 7.295' , 73° 27.883'  GPS delta: 0.00 miles
-Starlink Position: 4° 7.295' , 73° 27.883'  GPS delta: 0.00 miles
+diff_starlink_gps.py 
+Starlink Position: 4° 7.294' , 73° 27.882'  GPS delta: 0.0 miles
+Starlink Position: 4° 7.294' , 73° 27.882'  GPS delta: 0.0 miles
+Starlink Position: 4° 7.294' , 73° 27.882'  GPS delta: 0.0 miles
+Starlink Position: 4° 7.294' , 73° 27.882'  GPS delta: 0.0 miles
+Starlink Position: 4° 7.294' , 73° 27.882'  GPS delta: 0.0 miles
 ```
 Observe the delta-distance between
 the location provided by Starlink and that provided by GPS.
