@@ -1,16 +1,32 @@
 # Starlink_position overview
 
-These pages describe various ways to use Starlink for obtaining a position fix in GPS-denied environments. The pages and programs are oriented toward cruising
-sailboats.
+These pages describe various ways to use Starlink for obtaining a
+position fix in GPS-denied environments. The pages and programs are
+oriented toward cruising sailboats.
 
-This site and associated GitHub repo is NOT intended to replace the WhatsApp group. WhatsApp is a useful discussion forum for general communication on this topic. Rather, this site is intended to preserve important material and software that those who join after a given WhatsApp post has been made can get the info.
+This site and associated GitHub repo is NOT intended to replace the
+WhatsApp group. WhatsApp is a useful discussion forum for general
+communication on this topic. Rather, this site is intended to be a
+repository for important documentation and software that will not be visible
+to those who join the WhatsApp group after some post has been made. It
+is a place for anyone to get the relevant info at any time.
 
 # Background
 
 Many new members of the Cruiser Connect community, and especially the
 Starlink Datahub GPS positioning discussion have joined and likely missed
-some of the earlier
-messages. This website is intended as a reference to bring them up to speed.
+some of the earlier messages. This website is intended as a reference
+to bring them up to speed.
+
+### PredictWind Datahub
+
+PredictWind is finalizing a plugin release for their Datahub that can read
+starlink position information and provide that as a source on a NMEA
+2000 network (or SeatalkNG network). This gives us a choice to use that
+with our chartplotters in the event we encounter denial of standard GPS
+due to jamming or spoofing or any other GPS outage. Bruce (Wild Orchid)
+has tested it on a Raymarine Axiom Pro. Rui (Anne Charlotte) has tested
+it on an older Raymarine E120 (Wide) Classic, and also with OpenCPN.
 
 ### Finn's Starlink -> OpenCPN project
 
@@ -18,7 +34,8 @@ Finn (member of the Starlink datahub positioning discussion WhatsApp
 group) has shared a GitHub archive that will allow a computer (laptop,
 raspberry pi, etc.) to run a program that extracts the starlink position
 and provides it to other Nav programs (OpenCPN for example). This does
-not require a datahub.
+not require a PredictWind Datahub, so would be a useful option for
+cruisers who do not have a Datahub.
 
 ### GPS loss-alerting project
 
@@ -29,26 +46,24 @@ alert could trigger you to switch from your standard chartplotter gps
 source to either a datahub with starlink or OpenCPN. This program requires
 a computer that runs signalk and has access to your NMEA network.
 
-### PredictWind
-
-PredictWind is working on new release for their datahub that can read
-the starlink position information and provide that as a source on a NMEA
-2000 network (or SeatalkNG network). This is meant to give us a choice
-to use that with our chartplotters in the event we encounter denial of
-standard GPS due to jamming or spoofing or any other GPS outage. Bruce
-(Wild Orchid) volunteered to be their initial test and that will hopefully
-happen in the next few days.
-
 # Capabilities
 
-Two main capabilities are described in these pages:
+Three main capabilities are described in these pages:
 
-1. **Starlink->OpenCPN:** Convert Starlink location data to NMEA messages
-and pipe them into OpenCPN. Use OpenCPN for navigation based on
+1. **Starlink->PredictWind Datahub->Raymarine chartplotter or OpenCPN:** 
+Convert Starlink location data to NMEA messages and pipe them into
+a Raymarine chartplotter or OpenCPN.
+Use the chartplotter or OpenCPN for navigation based on
 Starlink location. This should bypass
 GPS, and should help if GPS is unavailable or spoofed.
 
-2. **GPS Loss-Alerting:** Detect when Starlink location differs from the
+2. **Starlink->OpenCPN:** Convert Starlink location data to NMEA messages
+using a python program, and pipe them into OpenCPN.
+Use OpenCPN for navigation based on
+Starlink location. This should bypass
+GPS, and should help if GPS is unavailable or spoofed.
+
+3. **GPS Loss-Alerting:** Detect when Starlink location differs from the
 GPS location, or when Starlink or GPS location becomes unavailable (data
 timeout). Send an email alert.  This should help warn a cruiser that they
 need to switch to alternate location source, such as using option 1. This
@@ -56,18 +71,20 @@ is a work in progress - as of now there is a program which compares the
 Starlink position to the GPS position and prints the Starlink position
 and offset from GPS.
 
-3. Future: PredictWind is said to be working on a plugin that takes Starlink
-position data and emits it as a NMEA data source intended to feed a RayMarine
-chart plotter. Bruce (Wild Orchid) is lead on testing this if/when it becomes available.
-
-All these capabilities rely on the Starlink antenna making its position data available
-on the local network. Depending on the flow, other configuration or software
-installation may be needed.
-
 # Starlink setup
+
+All these capabilities rely on the Starlink antenna making its position
+data available on the local network. Depending on the flow, other
+configuration or software installation may be needed.
 
 Follow the instructions at [this page](starlink_setup.html) to configure your
 Starlink antenna to make its data available on the local network.
+
+# Starlink->PredictWind Datahub->Chartplotter or OpenCPN setup
+
+Follow the instructions at [this page](pw_datahub_setup.html) to configure your
+Starlink location data to be forwarded via PredictWind's Datahub to your
+chartplotter or OpenCPN
 
 # Starlink->OpenCPN setup
 

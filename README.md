@@ -1,4 +1,4 @@
-# Starlink Fix
+# Starlink Position
 
 This repo contains programs and documentation related to obtaining a
 position fix from Starlink, and cruiser use of

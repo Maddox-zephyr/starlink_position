@@ -19,6 +19,7 @@ following the steps on [this page](https://maddox-zephyr.github.io/starlink_posi
 ## Get the OpenCPN-Starlink zip file
 
 - Send your browser to the [URL to download the Starlink_data_to_NMEA.zip file](https://github.com/Maddox-zephyr/starlink_position/releases)
+- Under the most recent release, expand the Assets dropdown.
 - Click on the Starlink_data_to_NMEA.zip file to
 download the zip file to your computer
 - Move the file to any place you want on your computer and unzip it into a folder.
@@ -35,7 +36,7 @@ cd C:\Users\...Starlink_data_to_NMEA\starlink-grpc-tools-main
 ```
 - Install the dependencies by entering the following command into Powershell:
 ```
-py -m pip install -r requirements.txt
+python -m pip install -r requirements.txt
 ```
 - Open the Starlink_data_to_NMEA.py file using any editor (e.g. Notepad, IDLE, etc)
 - Check that all settings match your needs. Specifically check that your UDP_IP
