@@ -38,6 +38,14 @@ Bruce (Wild Orchid) has tested it on a Raymarine Axiom Pro. Rui (Anne
 Charlotte) has tested it on an older Raymarine E120 (Wide) Classic,
 and also with OpenCPN.
 
+Keep in mind, both Starlink and PredictWind will disavow this a a general
+purpose navigation source, for legal purposes. None of us really know have
+well this will work in a real gps degraded or spoofed environment. After
+determining that the gps environment is degraded or spoofed, you could
+switch your chartplotter to use the DataHub with starlink. You should
+still be extremely vigilant in case the starlink data is not correct
+and switch back to your normal GPS source as soon as it seems stable.
+
 ### Starlink -> Signalk -> OpenCPN
 
 The original configuration that spawned all the others.  Using SignalK +
