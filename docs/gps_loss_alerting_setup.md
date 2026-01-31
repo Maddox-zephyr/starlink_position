@@ -76,4 +76,4 @@ the alert by email
 5. Configure diff_starlink_gps.py and send_gps_status_email.py to run as
 services
 6. Wait for an email saying GPS is wrong. Check logs to confirm. Switch
-to alternate navigation. Sail on happily. :-)
+to alternate navigation. Sail on happily with good position. :-)
