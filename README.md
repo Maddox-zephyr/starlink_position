@@ -9,5 +9,5 @@ a boat's fix in GPS-compromised environments.
 
 Most of the documentation for how to configure starlink, OpenCPN
 and signalk and to setup and use the repo contents is on the
-[github pages website for this project](https://https://Maddox-zephyr.github.io/starlink_position)
+[github pages website for this project](https://Maddox-zephyr.github.io/starlink_position)
 
