@@ -39,12 +39,19 @@ Charlotte) has tested it on an older Raymarine E120 (Wide) Classic,
 and also with OpenCPN.
 
 Keep in mind, both Starlink and PredictWind will disavow this a a general
-purpose navigation source, for legal purposes. None of us really know have
-well this will work in a real gps degraded or spoofed environment. After
+purpose navigation source, for legal purposes. None of us know for sure how
+well this will work in a real gps degraded or spoofed environment in any
+given configuration. After
 determining that the gps environment is degraded or spoofed, you could
 switch your chartplotter to use the DataHub with starlink. You should
 still be extremely vigilant in case the starlink data is not correct
 and switch back to your normal GPS source as soon as it seems stable.
+
+That said, THEODORE reported that he actually sailed through an area of
+GPS spoofing near Port Soudan, and used starlink with the option “Use
+Starlink Positioning Exclusively”.  He said that Starlink position
+reported it had good accuracy under way at 5-6 knots for 50 miles, and
+that its position agreed with GPS once he exited the area of GPS jamming.
 
 ### Starlink -> Signalk -> OpenCPN
 
