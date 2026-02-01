@@ -15,7 +15,7 @@ the default to port 80 for my signalk.
 
 To add the signalk-starlink plugin to your signalk, login to signalk (top right hand three 
 horizontal lines) [view login image](images/Signalk_login.png), then click on Appstore, then 
-Available [view_applications](images/signalk_availabel.png).  You will find the plugin here.
+Available [view_applications](images/signalk_available.png).  You will find the plugin here.
 
 Next step is to configure the signalk-starlink plugin by going to Server, then Plugin Config, and 
 look for Starlink. You will want to enable it, then check the option for "Use Starlink as a GPS
