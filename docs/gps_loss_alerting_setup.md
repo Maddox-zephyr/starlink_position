@@ -25,7 +25,7 @@ source (requires enabling access on local network)."
 Restart signalk, and then using the Data Browser for siganlk, look for the path 
 navigation.position.  You probably have multiple of these, but one should have 
 signalk-starlink in the far right Source column. Note the path for the other "navigation.position" 
-source that you want to use to compare against stalink position. [view signalk data browser](images/signalk_data_browser)
+source that you want to use to compare against stalink position. [view signalk data browser](images/signalk_data_browser.png)
 
 **TODO: how to use these source paths in the program
 
