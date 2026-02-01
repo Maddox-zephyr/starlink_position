@@ -137,7 +137,15 @@ and sent to email if they don't match.
 
 The capabilities described above are supported by various software and documentation
 which is stored on Github at [Maddox-zephyr/starlink_position](https://github.com/Maddox-zephyr/starlink_position).
-That repo also has tabs for various purposes:
+
+# Repo Maintainers
+
+See the [repo maintainer instructions](repo_maintainer_instructions.html) for
+more information about the structure of the repo and how to make changes to it.
+
+# Repo tabs
+
+The repo also has tabs for various purposes:
 
 - A wiki tab. The wiki is open and can be read and updated by anyone with a GitHub
 account, and is intended for documenting user-findings that are not in the
