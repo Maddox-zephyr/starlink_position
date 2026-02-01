@@ -18,13 +18,14 @@ horizontal lines) [view login image](images/Signalk_login.png), then click on Ap
 Available [view_applications](images/signalk_available.png).  You will find the plugin here.
 
 Next step is to configure the signalk-starlink plugin by going to Server, then Plugin Config, and 
-look for Starlink [config signalk-starlink](images/signalk-starlink_plugin_config.jpeg). You will want to enable it, then check the option for "Use Starlink as a GPS
+look for Starlink [config signalk-starlink](images/signalk-starlink_plugin_config.jpeg). You will 
+want to enable it, then check the option for "Use Starlink as a GPS
 source (requires enabling access on local network)." 
 
 Restart signalk, and then using the Data Browser for siganlk, look for the path 
 navigation.position.  You probably have multiple of these, but one should have 
 signalk-starlink in the far right Source column. Note the path for the other "navigation.position" 
-source that you want to use to compare against stalink position. 
+source that you want to use to compare against stalink position. [view signalk data browser](images/signalk_data_browser)
 
 **TODO: how to use these source paths in the program
 
