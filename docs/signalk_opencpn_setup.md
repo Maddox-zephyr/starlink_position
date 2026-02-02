@@ -1,8 +1,8 @@
 # Signalk to OpenCPN setup
 
-## Pre-requisits
+## Prerequisites
 
-- You should have signalk running on a server somewhere on your network
+- signalk with the Starlink plugin running on a server somewhere on your network
 
 ## Signalk configuration
 
