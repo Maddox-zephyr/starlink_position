@@ -41,7 +41,7 @@ satellite passes over). By tracking several satellites, a receiver can calculate
 as the sub-meter accuracy of high-end GPS, it is more than enough for drone navigation or 
 maritime travel when GPS is totally blacked out.  
 
-#Integrated Resilience (SpaceX Official Features)
+# Integrated Resilience (SpaceX Official Features)
 SpaceX has begun leaning into this capability officially. In recent FCC filings and military
 tests, they have highlighted:
 
