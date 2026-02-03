@@ -49,70 +49,8 @@ Both methods can be active simultaneously.
 - PredictWind **DataHub** (Pro model required)
 - PredictWind **Professional subscription**
 - Starlink (Mini tested, other generations expected to behave similarly)
-- Starlink configured to expose position data on the **local network**
-  - See: `starlink_setup.md`
-
----
-
-## 3. DataHub Firmware Update (Required)
-
-Starlink positioning support requires **DataHub firmware v4.41 (beta)**.
-
-### Steps
-1. Login to the DataHub web interface
-2. Navigate to: # PredictWind DataHub → Chartplotter / OpenCPN / Navionics Setup (Starlink Positioning)
-
-This document describes how to use **Starlink position data** via the **PredictWind DataHub**
-as an alternative navigation position source when GNSS is unavailable, degraded, or spoofed.
-
-The DataHub converts Starlink position data into standard **NMEA 0183** and **NMEA 2000**
-messages, making them usable by:
-
-- Chartplotters (Raymarine, etc.)
-- OpenCPN
-- Navionics (mobile)
-- Other NMEA-capable navigation software
-
-> ⚠️ **Important disclaimer**  
-> Starlink positioning and DataHub-derived GPS data are **not certified as primary navigation sources**.
-> This setup is intended as a **fallback / resilience option** only.
-> Always cross-check position data and revert to certified GNSS sources as soon as possible.
-
----
-
-## 1. Overview – Data Flow Options
-
-The PredictWind DataHub can distribute Starlink position data in **two parallel ways**:
-
-### 1.1 Over Wi-Fi (NMEA 0183)
-- UDP (recommended for most apps)
-- TCP (supported by some apps)
-- Used by:
-  - OpenCPN
-  - Navionics
-  - Other mobile or desktop apps
-
-### 1.2 Over the Navigation Backbone (NMEA 2000)
-- DataHub → **NMEA2000**
-- Can be bridged to:
-  - **SeatalkNG**
-  - **Seatalk1** (via Raymarine converters)
-- Used by:
-  - Chartplotters (MFDs)
-  - Autopilots
-  - Instruments
-
-Both methods can be active simultaneously.
-
----
-
-## 2. Pre-Requisites
-
-- PredictWind **DataHub** (Pro model required)
-- PredictWind **Professional subscription**
-- Starlink (Mini tested, other generations expected to behave similarly)
-- Starlink configured to expose position data on the **local network**
-  - See: `starlink_setup.md`
+- Starlink configured to expose position data on the **local network** and to **use Startlink positioning exclusively**
+  - See: [Starlink setup](starlink_setup.md) for details
 
 ---
 
@@ -124,12 +62,14 @@ Starlink positioning support requires **DataHub firmware v4.41 (beta)**.
 1. Login to the DataHub web interface
 2. Navigate to: Services → Settings → Software Update
 3. Select **Alternate**
-4. Upgrade to **v4.41**
+4. Upgrade to **v4.41** or later
 
 You should see in the changelog: 
   Starlink infrastructure
   > ℹ️ This feature is currently available only to **PredictWind Pro users**.
   > DataHub Pro hardware is required due to increased memory and CPU usage.
+
+![IMAGE_DataHub Alternate SW update](images/DH_Alternate Update.jpg)
 
 ---
 
