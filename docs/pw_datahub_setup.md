@@ -223,7 +223,7 @@ This allows **full system integration**, including:
 
 This ensures OpenCPN uses **only Starlink-derived position data**.
 
-[IMAGE: OpenCPN – Built-in GPS disabled]
+![IMAGE: OpenCPN – Built-in GPS disabled]
 
 
 ---
