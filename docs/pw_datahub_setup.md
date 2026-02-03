@@ -69,8 +69,9 @@ You should see in the changelog:
   > ℹ️ This feature is currently available only to **PredictWind Pro users**.
   > DataHub Pro hardware is required due to increased memory and CPU usage.
 
-![IMAGE_DataHub Alternate SW update](images/DH_Alternate_Update.jpg)
-
+### Image placeholder
+![IMAGE:_DataHub Alternate SW update](images/DH_Alternate_Update.jpg)
+(DataHub alternate download)
 ---
 
 ## 4. Enable Starlink GPS in DataHub
@@ -87,7 +88,7 @@ After reload, two new tabs will appear:
 - **Status** (dish and signal information)
 
 ### Image placeholder
-[IMAGE: DataHub Internet → Starlink → GPS via Starlink enabled]
+![IMAGE: DataHub Internet → Starlink → GPS via Starlink enabled](images/DH_GPS_via_Starlink.jpg)
 (Make/Model: PredictWind DataHub, firmware v4.41)
 
 
