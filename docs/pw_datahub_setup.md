@@ -210,7 +210,7 @@ This allows **full system integration**, including:
   - Input only
   - Enable
 
-![IMAGE: OpenCPN – Network connection settings using UDP](images/OPENCPN_TCP_Setup.JPG)
+![IMAGE: OpenCPN – Network connection settings using TCP](images/openCPN_TCP_Selection.JPG)
 
 
 ---
