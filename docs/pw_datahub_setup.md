@@ -157,7 +157,7 @@ The chartplotter will then automatically use the **only available source**: Data
 
 
 #### Example: Fix restored via DataHub / Starlink
-[IMAGE: GPS Status – Fix, coordinates, HDOP from DataHub](images/RaymarineE120_working_with_Startlink.jpg)
+![IMAGE: GPS Status – Fix, coordinates, HDOP from DataHub](images/RaymarineE120_working_with_Startlink.jpg)
 (Make/Model: Raymarine E120 Wide Classic)
 
 
@@ -179,9 +179,72 @@ This allows **full system integration**, including:
 
 ---
 
-## 8. OpenCPN Configuration (Step-by-Step)
+## 8. Navionics Configuration ( (Step-by-Step)
 
-### 8.1 Network Setup
+### 8.1 Disable Internal GPS / disable phone **Location Services**
+
+This ensures Navionics uses **only Starlink-derived position data**.
+
+![IMAGE: Disabling phone Location Services](images/Toogle_Off_Location_Services.PNG)
+ 
+### 8.2 Your Navionics shouls give you a warning **GPS not enabled**. We are not ready to pair our Datahub as the new GPS source
+
+![IMAGE: Navionics warning "GPS not exabled"](images/Navionics_location_services_off.JPG)
+
+### 8.3 Connect device to **DataHub Wi-Fi**
+### 8.4 Pair the DataHub GPS source: Go to:  Menu → Paired Devices
+
+![IMAGE: Navionics – Menu - Paired Devices](images/Navionics_Paired_devices_menu.PNG)
+
+### 8.5 Click the '+' to pair a new device and then click on 'Add Device"
+
+![IMAGE: Navionics - How to pair a new device](images/Navionics_how_to_pair_new_device.PNG)
+
+![IMAGE: Navionics - Pairing a New Device](images/Navionics_Pairing_new_device.PNG)
+
+### 8.6 Setup the new device as:
+  - Name: DataHub_Starlink_over UDP (example - free field)
+  - Host: 0.0.0.0
+  - Port Number: 11101 
+  - Protocol : **UDP** (recommended)
+
+![IMAGE: Navionics – Pairing Datahub using UDP](images/Navionics_Pairing_Datahub_over_UDP_setup.PNG)
+
+  OR
+  - Name: DataHub_Starlink_over TCP (example - free field)
+  - Host: 10.10.10.1
+  - Port Number: 11102
+  - Protocol : **TCP** (alternative)
+
+### 8.7. Click **SAVE**
+  You should now be able to see the new active device receiving GPS positions from the paired Datahub:
+
+![IMAGE: Navionics - Datahub successfully paired](images/Navionics_datahub-successfully_paired.PNG)
+   
+### 8.8 You are now ready to navigate using Navionics using Starlink Positioning over Datahub
+
+![IMAGE: Navionics - Navigating using Startlink Positioning over Datahub](images/Navionics_Navigating_using_Starlink.PNG)
+
+
+### Remarks:
+- Navionics **cannot disable a paired device**
+- An active connection **cannot be forgotten**
+- You must break the connection (disable Wi-Fi or switch off DataHub) to remove it
+
+---
+
+## 9. OpenCPN Configuration (Step-by-Step)
+
+### 9.1 Disable Internal GPS
+
+- Uncheck **Built-in GPS** in OpenCPN  
+  **OR**
+- Disable phone/tablet **Location Services** (see item **8.1**)
+
+This ensures OpenCPN uses **only Starlink-derived position data**.
+
+
+### 9.2 Network Setup
 - Ensure your device is connected to the **DataHub Wi-Fi**
 - **Not** the Starlink Wi-Fi
 
@@ -190,7 +253,7 @@ This allows **full system integration**, including:
 
 ---
 
-### 8.2 Add Network Connection
+### 9.3 Add Network Connection
 
 1. Open OpenCPN
 2. Go to: Options → Connections
@@ -210,51 +273,19 @@ This allows **full system integration**, including:
   - Input only
   - Enable
 
-![IMAGE: OpenCPN – Network connection settings using UDP](images/OPENCPN_TCP_Setup.JPG)
-
-
----
-
-### 8.3 Disable Internal GPS (Recommended)
-
-- Uncheck **Built-in GPS** in OpenCPN  
-  **OR**
-- Disable phone/tablet **Location Services**
-
-This ensures OpenCPN uses **only Starlink-derived position data**.
-
-![IMAGE: OpenCPN – Built-in GPS disabled]
-
+![IMAGE: OpenCPN – Network connection settings using TCP](images/openCPN_TCP_setup.JPG)
 
 ---
 
-## 9. Navionics Configuration (Mobile)
+### 9.4 Go to Settings → Connections and make sure you are only selecting Datahub as the GPS source (UDP or TCP)
 
-Navionics supports **external GPS sources over Wi-Fi**, but with limitations.
+![IMAGE: OpenCPN - Selecting the datahub as the new GPS source over UDP or TCP](images/openCPN_UDP_Selection.JPG)
 
-### Key points:
-- Navionics **cannot disable a paired device**
-- An active connection **cannot be forgotten**
-- You must break the connection (disable Wi-Fi or DataHub) to remove it
+---
 
-### Steps:
-1. Connect device to **DataHub Wi-Fi**
-2. Pair the DataHub GPS source
-3. Disable phone **Location Services**
-4. Restart Navionics
+### 9.5 You are now ready to navigate using OpenCPN with Startlink Positionig over Datahub
 
-[IMAGE: Navionics – External GPS receiving data]
-
-[IMAGE: Navionics – External GPS receiving data]
-
-
-### Example: Before DataHub activation
-[IMAGE: Navionics – GPS not enabled]
-
-
-### Example: Using Starlink positioning
-[IMAGE: Navionics – Track, SOG, COG via DataHub/Starlink]
-
+![IMAGE: OpenCPN - Navigating using Startlink Positioning over Datahub](images/OpenCPN_Navigation.JPG)
 
 ---
 
