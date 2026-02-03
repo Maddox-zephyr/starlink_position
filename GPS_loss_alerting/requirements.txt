@@ -1,2 +1,2 @@
-dict_digger==0.2.1
-websockets==16.0
+dict_digger>=1.1.2
+websockets>=12.0
