@@ -69,7 +69,7 @@ You should see in the changelog:
   > ℹ️ This feature is currently available only to **PredictWind Pro users**.
   > DataHub Pro hardware is required due to increased memory and CPU usage.
 
-![IMAGE_DataHub Alternate SW update](images/DH_Alternate Update.jpg)
+![IMAGE_DataHub Alternate SW update](images/DH_Alternate_Update.jpg)
 
 ---
 
