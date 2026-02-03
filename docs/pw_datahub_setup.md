@@ -69,7 +69,6 @@ You should see in the changelog:
   > ℹ️ This feature is currently available only to **PredictWind Pro users**.
   > DataHub Pro hardware is required due to increased memory and CPU usage.
 
-### Image placeholder
 ![IMAGE:_DataHub Alternate SW update](images/DH_Alternate_Update.jpg)
 (DataHub alternate download)
 ---
@@ -77,20 +76,19 @@ You should see in the changelog:
 ## 4. Enable Starlink GPS in DataHub
 
 After updating:
-
 1. Go to: Internet → Starlink
-2. Enable:
-- **GPS via Starlink**
+2. Enable **GPS via Starlink**
 3. Click **Save & Apply**
 
-After reload, two new tabs will appear:
-- **Position** (live Starlink fix)
-- **Status** (dish and signal information)
-
-### Image placeholder
 ![IMAGE: DataHub Internet → Starlink → GPS via Starlink enabled](images/DH_GPS_via_Starlink.jpg)
 (Make/Model: PredictWind DataHub, firmware v4.41)
 
+4. Then go to: NMEA → Source
+5. Select **Position via Statlink**
+6. Click **Save & Apply**
+
+![IMAGE: DataHub NMEA → Source → Position via Startlink selected](images/DH_Nmea_Source_via_Startlink.jpg)
+(Make/Model: PredictWind DataHub, firmware v4.41)
 
 ---
 
@@ -120,8 +118,7 @@ Recent DataHub updates introduce **advanced tuning options**:
 
 > ⚠️ Excessive smoothing may delay turns and course changes.
 
-### Image placeholder
-[IMAGE: DataHub Starlink GPS Advanced Options – Poll Rate / Window Size / Smoothing]
+[IMAGE: DataHub Starlink GPS Advanced Options – Poll Rate / Window Size / Smoothing](images/DH_GPS_via_Startlink_Advanced.jpg)
 (Make/Model: PredictWind DataHub)
 
 ---
