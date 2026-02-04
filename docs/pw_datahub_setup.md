@@ -66,7 +66,7 @@ Both methods can be active simultaneously.
 
 ## 3. DataHub Firmware Update (Required)
 
-Starlink positioning support requires **DataHub firmware v4.41 (beta)**.
+Starlink positioning support requires **DataHub firmware v4.43 (beta)**.
 
 ### Steps
 1. Login to the DataHub web interface
@@ -147,7 +147,7 @@ Recent DataHub updates introduce **advanced tuning options**:
 ### 6.3 Smoothing Factor
 - Range: 0.0 – 1.0
 - Exponential smoothing applied to track output
-- Higher = smoother, but increased latency
+- Lower = smoother, but increased latency (1 = no smoothing; 0.3 = 70% smoothing)
 
 **Recommended starting values:**
 - Poll Rate: `3`
