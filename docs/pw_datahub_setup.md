@@ -21,7 +21,8 @@ messages, making them usable by:
 > The DataHub cannot accommodate this feature in the firmware due to its large file size.
 > PredictWind is offering this upgrade via a manual workaround that relies on the Datahub's internal SD card, and as such is not a long-term solution.
 > We have done this to provide immediate support to Red Sea cruisers in the interests of the safety of our customers.
-> This is a limited time offer available to Red Sea Cruisers until April 1, 2026
+> 
+> This is a limited-time offer available to Red Sea Cruisers until **April 1, 2026**
 > 
 > The best solution is to [buy a DataHub Pro](https://shop.predictwind.com/shop/product/datahub-pro-unit) to continue to use Starlink GPS long term. 
 
