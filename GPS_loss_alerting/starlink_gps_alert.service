@@ -1,0 +1,18 @@
+[Unit]
+Description=Starlink - GPS alerting service
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+User=bruce
+WorkingDirectory=/home/bruce/starlink_position/GPS_loss_alerting/
+# Replace with the full path to your python executable and script
+ExecStart=/home/bruce/starlink_position/GPS_loss_alerting/.venv/bin/python /home/bruce/starlink_position/GPS_loss_alerting/starlink_gps_alert.py
+# Redirect output to your log file
+StandardOutput=append:/home/bruce/logs/starlink_gps_alert_daemon.log
+StandardError=append:/home/bruce/logs/starlink_gps_alert_daemon.log
+
+[Install]
+WantedBy=multi-user.target
+

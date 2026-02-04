@@ -1,2 +1,6 @@
 dict_digger
 websockets
+redmail
+pyyaml
+typeguard
+setuptools
