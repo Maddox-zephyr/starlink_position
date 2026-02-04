@@ -9,23 +9,30 @@ status emails.
 
 ## Signalk configuration
 
-Note: signalk standard/default convention is to have 192.168.1.xxx:3000 as the path to 
-control/view signalk. Port 3000 was already taken on my server with a grafana page, so I changed 
-the default to port 80 for my signalk.
+Note: signalk standard/default convention is to have 192.168.1.xxx:3000 as
+the path to control/view signalk. Port 3000 was already taken on my server
+with a grafana page, so I changed the default to port 80 for my signalk.
 
-To add the signalk-starlink plugin to your signalk, login to signalk (top right hand three 
-horizontal lines) [view login image](images/Signalk_login.png), then click on Appstore, then 
-Available [view_applications](images/signalk_available.png).  You will find the plugin here.
+To add the signalk-starlink plugin to your signalk, login to signalk
+(top right, three horizontal lines) 
+![view login image](images/Signalk_login.png)
+then click on Appstore, then **Available**
+![view_applications](images/signalk_available.png)
+You will find the plugin here.
 
-Next step is to configure the signalk-starlink plugin by going to Server, then Plugin Config, and 
-look for Starlink [config signalk-starlink](images/signalk-starlink_plugin_config.jpeg). You will 
-want to enable it, then check the option for "Use Starlink as a GPS
-source (requires enabling access on local network)." 
+The next step is to configure the signalk-starlink plugin by going to
+Server, then Plugin Config, and look for Starlink
+![config signalk-starlink](images/signalk-starlink_plugin_config.jpeg)
+You will want to enable it, then check the option for "Use Starlink as a GPS
+source (requires enabling starlink access on local network
+as previously described)." 
 
 Restart signalk, and then using the Data Browser for siganlk, look for the path 
 navigation.position.  You probably have multiple of these, but one should have 
-signalk-starlink in the far right Source column. Note the path for the other "navigation.position" 
-source that you want to use to compare against stalink position. [view signalk data browser](images/signalk_data_browser.png)
+signalk-starlink in the far right Source column. Note the path for
+the other "navigation.position" source that you want to use to
+compare against stalink position.
+![view signalk data browser](images/signalk_data_browser.png)
 
 **TODO: how to use these source paths in the program
 
