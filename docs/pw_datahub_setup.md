@@ -122,8 +122,12 @@ After updating:
 (Make/Model: PredictWind DataHub, firmware v4.43)
 
 4. Then go to: **NMEA → Source**
-5. Select **Position via Statlink**
+5. Select **Position via Starlink**
 6. Click **Save & Apply**
+
+ ℹ️ In future, if you wish to revert to regular GPS, update **NMEA → Source** back to your preferred option, e.g. NMEA2000 on CAN0, then click Save & Apply. 
+ 
+ ℹ️ If you are not using SLGPS for an extended period, it may be wise to disable it under **Internet > Starlink** to reduce DataHub CPU usage.
 
 ![IMAGE: DataHub NMEA → Source → Position via Startlink selected](images/DH_Nmea_Source_via_Startlink.jpg)
 (Make/Model: PredictWind DataHub, firmware v4.43)
@@ -349,6 +353,9 @@ The DataHub outputs:
 - `RMC` – Recommended Minimum Navigation Data
 - `GGA` – Fix data
 - `GLL` – Geographic position
+- 'GSA' - Satellite Quality and Signal Dilution of Precision
+- 'GSV' - Number of Satellites in View
+- 'PSTAR' - Starlink Status Information (Online / Offline / Estimate vs Actual Position)
 
 These are consumed by:
 - OpenCPN
