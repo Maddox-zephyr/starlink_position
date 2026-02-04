@@ -116,10 +116,10 @@ However:
 
 Once Starlink location data is confirmed to be available on the local network, continue with one of the following setup guides:
 - **PredictWind DataHub integration:**  
-  → [PredictWind DataHub integration](pw_datahub_setup.html)
+  → [PredictWind DataHub integration](pw_datahub_setup.md)
 
 - **SignalK → OpenCPN integration:**  
-  → [SignalK → OpenCPN integration](signalk_opencpn_setup.html)
+  → [SignalK → OpenCPN integration](signalk_opencpn_setup.md)
 
 These documents describe how to forward Starlink position data into chartplotters and navigation software.
 
