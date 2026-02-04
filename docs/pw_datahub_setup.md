@@ -169,7 +169,6 @@ Some MFDs (e.g. Raymarine Axiom series) allow manual GPS source selection.
 
 Select: GPS Source → DataHub (RDSensing)
 
-### Image placeholder
 ![IMAGE: Raymarine Axiom Pro – GPS source selection showing DataHub](images/chartplotter_gps_select_screen.jpeg)
 (Make/Model: Raymarine Axiom Pro)
 
@@ -225,7 +224,7 @@ This ensures Navionics uses **only Starlink-derived position data**.
 
 ---
  
-### 9.2 Your Navionics shouls give you a warning **GPS not enabled**. We are not ready to pair our Datahub as the new GPS source
+### 9.2 Your Navionics shouls give you a warning **GPS not enabled**. We are now ready to pair our Datahub as the new GPS source
 
 ![IMAGE: Navionics warning "GPS not exabled"](images/Navionics_location_services_off.JPG)
 
