@@ -7,16 +7,21 @@ import requests
 # If you don't want to send to both gmail and telegram, you can modify this function
 # to only call one of the two alerting functions.
 def send_alert(message):
-    send_gmail_alert(message)
-    send_telegram_alert(message)
+    if (alerting_secrets.gmail_alert_enabled):
+        send_gmail_alert(message)
+    if (alerting_secrets.telegram_alert_enabled):
+        send_telegram_alert(message)
 
 # Send email alert
 def send_gmail_alert(message):
     gmail.username = alerting_secrets.username
     gmail.password = alerting_secrets.password
+    receivers = alerting_secrets.receivers
+    subject = alerting_secrets.subject
+
     gmail.send(
-        subject="Wild Orchid Starlink - GPS Alert",
-        receivers=['paul.bouchier@gmail.com', 'bruce.toal@gmail.com'],
+        subject=subject,
+        receivers=receivers,
         text=message
     )
 

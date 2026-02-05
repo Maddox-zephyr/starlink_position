@@ -120,27 +120,31 @@ and you pipe them into OpenCPN.  You then use OpenCPN for navigation
 based on Starlink location. This should bypass GPS, and should help if
 GPS is unavailable or spoofed.
 
-### GPS loss-alerting project
+### GPS loss-alerting
 
-A krafty kiwi krew member on Wild Orchid is working on a program that can
-pull starlink and NMEA positions from signalk and compare them and send
-an alert when the two gps sources disagree by a significant amount. This
-alert could trigger you to switch from your standard chartplotter gps
-source to an alternate way of getting location data into your
-chartplotter or OpenCPN. This program requires
-a computer that runs signalk and has access to your NMEA network.
+The GPS_loss_alerting folder in this software contains a program that
+pulls starlink and NMEA positions from signalk and compares them and
+sends an alert when the two gps sources disagree by more than 0.1
+nautical miles. This alert could indicate you should switch from your
+standard chartplotter gps source to an alternate way of getting location
+data into your chartplotter or OpenCPN (e.g. by selecting Starlink as
+a location data source).
 
 It will also detect when Starlink or GPS location becomes unavailable
 (data timeout). It will send an email alert. This should help warn a
-cruiser that they need to switch to alternate navigation solution. This project
-is a work in progress - as of now there is a program which compares the
-Starlink position to the GPS position and prints the Starlink position
-and offset from GPS.
+cruiser that they need to switch to alternate navigation solution.
+
+#### System Requirements
+
+This program requires that there be a computer running signalk that
+has access to your NMEA network.  It is built to be a linux service,
+but can be run from the command-line or an IDE on any computer - it is
+intended to work on both Windows and Linux.
 
 # Starlink setup
 
 All these capabilities that use Starlink position data rely 
-on the Starlink antenna making its position
+on the Starlink antennrereada making its position
 data available on the local network. Depending on the capability, other
 configuration or software installation may be needed.
 
@@ -172,7 +176,7 @@ python scripts to forward Starlink location data to OpenCPN
 
 Follow the instructions at [this page](gps_loss_alerting_setup.html) to configure
 your Starlink location to be compared to GPS, and the comparison results printed
-and sent to email if they don't match.
+and sent to email and/or Telegram if they don't match.
 
 # The GitHub repo
 
