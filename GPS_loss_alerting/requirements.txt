@@ -4,3 +4,4 @@ redmail
 pyyaml
 typeguard
 setuptools
+requests

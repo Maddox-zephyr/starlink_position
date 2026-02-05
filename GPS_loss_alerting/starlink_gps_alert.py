@@ -1,16 +1,46 @@
 from redmail import gmail
-import gmail_secrets
+import alerting_secrets
 import os
 import time
+import requests
 
+# If you don't want to send to both gmail and telegram, you can modify this function
+# to only call one of the two alerting functions.
 def send_alert(message):
-    gmail.username = gmail_secrets.username
-    gmail.password = gmail_secrets.password
+    send_gmail_alert(message)
+    send_telegram_alert(message)
+
+# Send email alert
+def send_gmail_alert(message):
+    gmail.username = alerting_secrets.username
+    gmail.password = alerting_secrets.password
     gmail.send(
         subject="Wild Orchid Starlink - GPS Alert",
-        receivers=['paul.bouchier@gmail.com'],
+        receivers=['paul.bouchier@gmail.com', 'bruce.toal@gmail.com'],
         text=message
     )
+
+# Send Telegram alert
+def send_telegram_alert(message):
+    # send message to all configured bots
+    for bot in alerting_secrets.bots_credentials:
+        token = bot.get("BOT_TOKEN")
+        chat = bot.get("CHAT_ID")
+        if token and chat:
+            send_telegram_message(token, chat, message)
+        else:
+            print("Skipping bot with incomplete credentials:", bot)
+
+def send_telegram_message(bot_token, chat_id, message):
+    """Sends a message to a specified Telegram chat."""
+    api_url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
+    
+    try:
+        response = requests.post(api_url, json={'chat_id': chat_id, 'text': message})
+        response.raise_for_status()  # Raise an exception for bad status codes
+        print("Message sent successfully!")
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred: {e}")
 
 # Expand environment variables for file paths
 alerts_file = os.path.expandvars('$HOME/logs/starlink_gps_alerts.txt')
