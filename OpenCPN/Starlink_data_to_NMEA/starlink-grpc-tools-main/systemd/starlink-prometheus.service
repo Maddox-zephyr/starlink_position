@@ -1,0 +1,12 @@
+[Unit]
+Description=Starlink GRPC to Prometheus exporter
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/starlink-grpc-tools/
+ExecStart=/opt/starlink-grpc-tools/venv/bin/python3 dish_grpc_prometheus.py status alert_detail usage location power
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target
