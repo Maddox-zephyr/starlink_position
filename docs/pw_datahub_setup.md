@@ -169,7 +169,7 @@ Recent DataHub updates introduce **advanced tuning options**:
 
 ### 7.1 Modern Chartplotters (GPS Source Selection)
 
-Some MFDs (e.g. Raymarine Axiom series and B&G Zeus SR-10) allow manual GPS source selection.
+Some MFDs (e.g. Raymarine Axiom series, and B&G Zeus Series) allow manual GPS source selection.
 
 ### 7.1.1 Raymarine Axiom Series
 **Select:** GPS Source → DataHub (RDSensing)
@@ -197,6 +197,18 @@ Some MFDs (e.g. Raymarine Axiom series and B&G Zeus SR-10) allow manual GPS sour
 (Make/Model: B&G ZEUS SR-10)
 
 ---
+
+### 7.1.3 B&G Zeus 3
+**Select:**
+  1. Settings
+  2. Network
+  3. Sources
+  4. Advanced
+  5. GPS
+  6. There should be a new option showing: **"RDS Sender NMEAD**
+
+![IMAGE: B&G ZEUS 3](images/BG_ZEUS3.jpeg)
+(Make/Model: B&G ZEUS 3)
 
 ### 7.2 Legacy Chartplotters (No GPS Source Selection)
 
