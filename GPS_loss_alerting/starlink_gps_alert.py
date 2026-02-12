@@ -80,7 +80,7 @@ def main():
     except Exception as e:
         error_message = f'starlink_gps_alert: Exception occurred: {str(e)}'
         send_alert(error_message)
-        exit(1)
+        # exit(1)
 
 if __name__ == "__main__":
     main()

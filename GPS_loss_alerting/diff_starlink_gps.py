@@ -14,7 +14,7 @@ from pathlib import Path
 
 # --- Constants ---
 # Distance threshold for alerts, in nautical miles
-DISTANCE_THRESHOLD_NM = 0.1
+DISTANCE_THRESHOLD_NM = 0.4
 # Time threshold for data loss, in seconds
 DATA_LOSS_TIMEOUT_S = 60.0
 # Websocket URI for Signal K server
@@ -79,35 +79,51 @@ class CsvLogHandler(logging.Handler):
         if not self.csv_path.exists():
             try:
                 with open(self.csv_path, 'a') as f:
-                    f.write('seconds_since_start,starlink_lat,starlink_lon,gps_lat,gps_lon\n')
+                    f.write('date-time,slink_lat_min,slink_lon_min,gps_lat_min,gps_lon_min,diff_nm\n')
             except Exception:
                 pass
 
     def emit(self, record):
         try:
+            from datetime import datetime
             ctx = None
             try:
                 ctx = self.get_context()
             except Exception:
                 ctx = None
 
-            if ctx and getattr(ctx, 'start_time', None) is not None:
-                seconds = time.monotonic() - ctx.start_time
-            else:
-                seconds = ''
+            timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
+            def get_minutes(val):
+                try:
+                    if val is None or val == '':
+                        return ''
+                    d = int(float(val))
+                    m = abs(float(val) - d) * 60
+                    return f"{m:.2f}"
+                except Exception:
+                    return ''
 
-            slat = getattr(ctx, 'starlink_lat', '') or ''
-            slon = getattr(ctx, 'starlink_lon', '') or ''
-            glat = getattr(ctx, 'gps_lat', '') or ''
-            glon = getattr(ctx, 'gps_lon', '') or ''
+            slat = get_minutes(getattr(ctx, 'starlink_lat', None))
+            slon = get_minutes(getattr(ctx, 'starlink_lon', None))
+            glat = get_minutes(getattr(ctx, 'gps_lat', None))
+            glon = get_minutes(getattr(ctx, 'gps_lon', None))
 
-            # Format numeric seconds to a reasonable precision if available
-            if isinstance(seconds, float):
-                seconds_str = f"{seconds:.3f}"
-            else:
-                seconds_str = ''
+            # Try to get the current distance_nm from the context (GpsAlerter)
+            diff_nm = ''
+            if ctx is not None:
+                try:
+                    # If distance_nm is not a property, recompute if possible
+                    diff_nm_val = getattr(ctx, 'distance_nm', None)
+                    if diff_nm_val is None:
+                        # Try to compute if all values present
+                        if all([getattr(ctx, 'gps_lat', None), getattr(ctx, 'gps_lon', None), getattr(ctx, 'starlink_lat', None), getattr(ctx, 'starlink_lon', None)]):
+                            diff_nm_val = haversine(ctx.gps_lat, ctx.gps_lon, ctx.starlink_lat, ctx.starlink_lon)
+                    if diff_nm_val is not None:
+                        diff_nm = f"{diff_nm_val:.3f}"
+                except Exception:
+                    pass
 
-            line = f"{seconds_str},{slat},{slon},{glat},{glon}\n"
+            line = f"{timestamp},{slat},{slon},{glat},{glon},{diff_nm}\n"
             with open(self.csv_path, 'a') as f:
                 f.write(line)
         except Exception:
@@ -185,8 +201,8 @@ class GpsAlerter:
             self.test_state = "IDLE" # e.g., RAMP_LAT_UP, SUPPRESS_GPS
             self.gps_lat_offset = 0.0
             self.gps_lon_offset = 0.0
-            # Offset increment to achieve ~1/600 degree change in 2 minutes at 14Hz
-            self.offset_increment = (1.0 / 600.0) / (120.0 * 14.0)
+            # Offset increment to achieve ~4/600 degree change in 2 minutes at 14Hz
+            self.offset_increment = (4.0 / 600.0) / (120.0 * 14.0)
 
 
         self.logger.info("GpsAlerter initialized.")
@@ -198,7 +214,7 @@ class GpsAlerter:
         try:
             with open(self.alert_file, 'a') as f:
                 from datetime import datetime
-                timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                timestamp = datetime.now().strftime('%Y-%m-%dT%H:%M:%S')
                 f.write(f'{timestamp} - {message}\n')
         except Exception as e:
             self.logger.error(f"Error writing to alert file: {e}", exc_info=True)
@@ -364,6 +380,7 @@ class GpsAlerter:
                 )
                 self.alert_logger.warning(alert_msg)
                 self._write_alert_to_file(alert_msg)
+                self.max_distance_nm = 0.0 # Reset max distance after returning to normal
 
     async def _data_loss_checker_loop(self):
         """Periodically checks if data sources have timed out."""
@@ -417,17 +434,17 @@ class GpsAlerter:
         # --- GPS Offset Test ---
         self.logger.warning("STARTING GPS OFFSET TEST")
 
-        # Ramp latitude up from 0 to +2/600 deg (4 mins total)
-        self.logger.info("Test: Ramping latitude offset up to +2/600 deg over 4 mins...")
+        # Ramp latitude up from 0 to +8/600 deg (4 mins total)
+        self.logger.info("Test: Ramping latitude offset up to +8/600 deg over 4 mins...")
         self.test_state = "RAMP_LAT_UP"
         await asyncio.sleep(240) # 4 minutes
 
-        # Ramp latitude down from +2/600 to -2/600 deg (8 mins total)
-        self.logger.info("Test: Ramping latitude offset down to -2/600 deg over 8 mins...")
+        # Ramp latitude down from +8/600 to -8/600 deg (8 mins total)
+        self.logger.info("Test: Ramping latitude offset down to -8/600 deg over 8 mins...")
         self.test_state = "RAMP_LAT_DOWN"
         await asyncio.sleep(480) # 8 minutes
 
-        # Ramp latitude up from -2/600 to 0 deg (4 mins total)
+        # Ramp latitude up from -8/600 to 0 deg (4 mins total)
         self.logger.info("Test: Ramping latitude offset up to 0 deg over 4 mins...")
         self.test_state = "RAMP_LAT_UP"
         await asyncio.sleep(240) # 4 minutes
@@ -436,17 +453,17 @@ class GpsAlerter:
         self.logger.info("Test: Latitude offset test complete.")
         await asyncio.sleep(2)
 
-        # Ramp longitude up from 0 to +2/600 deg (4 mins total)
-        self.logger.info("Test: Ramping longitude offset up to +2/600 deg over 4 mins...")
+        # Ramp longitude up from 0 to +8/600 deg (4 mins total)
+        self.logger.info("Test: Ramping longitude offset up to +8/600 deg over 4 mins...")
         self.test_state = "RAMP_LON_UP"
         await asyncio.sleep(240) # 4 minutes
 
-        # Ramp longitude down from +2/600 to -2/600 deg (8 mins total)
-        self.logger.info("Test: Ramping longitude offset down to -2/600 deg over 8 mins...")
+        # Ramp longitude down from +8/600 to -8/600 deg (8 mins total)
+        self.logger.info("Test: Ramping longitude offset down to -8/600 deg over 8 mins...")
         self.test_state = "RAMP_LON_DOWN"
         await asyncio.sleep(480) # 8 minutes
 
-        # Ramp longitude up from -2/600 to 0 deg (4 mins total)
+        # Ramp longitude up from -8/600 to 0 deg (4 mins total)
         self.logger.info("Test: Ramping longitude offset up to 0 deg over 4 mins...")
         self.test_state = "RAMP_LON_UP"
         await asyncio.sleep(240) # 4 minutes
