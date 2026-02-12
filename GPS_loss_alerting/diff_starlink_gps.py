@@ -59,6 +59,61 @@ def setup_logging():
     return logger, alert_logger
 
 
+class CsvLogHandler(logging.Handler):
+    """Logging handler that appends a CSV row for each emitted log record.
+
+    The handler calls a provided callback to get an object with attributes
+    `start_time`, `starlink_lat`, `starlink_lon`, `gps_lat`, `gps_lon`.
+    """
+    def __init__(self, csv_path, get_context):
+        super().__init__()
+        self.csv_path = Path(csv_path)
+        self.get_context = get_context
+
+        # Ensure parent dir exists and create CSV header if missing
+        try:
+            self.csv_path.parent.mkdir(parents=True, exist_ok=True)
+        except Exception:
+            pass
+
+        if not self.csv_path.exists():
+            try:
+                with open(self.csv_path, 'a') as f:
+                    f.write('seconds_since_start,starlink_lat,starlink_lon,gps_lat,gps_lon\n')
+            except Exception:
+                pass
+
+    def emit(self, record):
+        try:
+            ctx = None
+            try:
+                ctx = self.get_context()
+            except Exception:
+                ctx = None
+
+            if ctx and getattr(ctx, 'start_time', None) is not None:
+                seconds = time.monotonic() - ctx.start_time
+            else:
+                seconds = ''
+
+            slat = getattr(ctx, 'starlink_lat', '') or ''
+            slon = getattr(ctx, 'starlink_lon', '') or ''
+            glat = getattr(ctx, 'gps_lat', '') or ''
+            glon = getattr(ctx, 'gps_lon', '') or ''
+
+            # Format numeric seconds to a reasonable precision if available
+            if isinstance(seconds, float):
+                seconds_str = f"{seconds:.3f}"
+            else:
+                seconds_str = ''
+
+            line = f"{seconds_str},{slat},{slon},{glat},{glon}\n"
+            with open(self.csv_path, 'a') as f:
+                f.write(line)
+        except Exception:
+            self.handleError(record)
+
+
 def haversine(lat1, lon1, lat2, lon2):
     """
     Calculate the great circle distance in nautical miles between two points
@@ -88,6 +143,20 @@ class GpsAlerter:
     def __init__(self, test_mode=False):
         self.test_mode = test_mode
         self.logger, self.alert_logger = setup_logging()
+
+        # Record application start time for CSV logging (seconds since start)
+        self.start_time = time.monotonic()
+
+        # CSV log path and handler: append a row for every log entry
+        try:
+            csv_path = Path.home() / "logs" / "starlink_gps_logs.csv"
+            csv_handler = CsvLogHandler(csv_path, lambda: self)
+            # Add the CSV handler to both loggers so any emitted record appends a CSV row
+            self.logger.addHandler(csv_handler)
+            self.alert_logger.addHandler(csv_handler)
+        except Exception as e:
+            # Fail gracefully if CSV handler can't be created
+            self.logger.error(f"Could not initialize CSV log handler: {e}")
 
         # Alert file path
         self.alert_file = Path.home() / "logs" / "starlink_gps_alerts.txt"
