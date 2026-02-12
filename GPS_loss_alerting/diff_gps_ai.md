@@ -86,3 +86,7 @@ minutes, then restore it.
 
 The test should print a log when it is complete, and resume normal operation (no more
 testing).
+
+### Log raw measurements to a csv file
+
+Open a file for appending in log_dir called starlink_gps_logs.csv and each time a log entry is written to the starlink_gps_logs.txt file I also want to append to the csv file a line with the number of seconds since the application started, and starlink latitude and longitude in decimal degrees and then gps latitude and longitude in decimal degrees
