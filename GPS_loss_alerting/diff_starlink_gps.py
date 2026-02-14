@@ -14,7 +14,7 @@ from pathlib import Path
 
 # --- Constants ---
 # Distance threshold for alerts, in nautical miles
-DISTANCE_THRESHOLD_NM = 0.4
+DISTANCE_THRESHOLD_NM = 1.0
 # Time threshold for data loss, in seconds
 DATA_LOSS_TIMEOUT_S = 60.0
 # Websocket URI for Signal K server
@@ -79,7 +79,7 @@ class CsvLogHandler(logging.Handler):
         if not self.csv_path.exists():
             try:
                 with open(self.csv_path, 'a') as f:
-                    f.write('date-time,slink_lat_min,slink_lon_min,gps_lat_min,gps_lon_min,diff_nm\n')
+                    f.write('date-time,slink_lat_min,slink_lon_min,gps_lat_min,gps_lon_min,diff_nm,sog\n')
             except Exception:
                 pass
 
@@ -123,7 +123,8 @@ class CsvLogHandler(logging.Handler):
                 except Exception:
                     pass
 
-            line = f"{timestamp},{slat},{slon},{glat},{glon},{diff_nm}\n"
+            sog = getattr(ctx, 'sog', '') if ctx is not None else ''
+            line = f"{timestamp},{slat},{slon},{glat},{glon},{diff_nm},{sog}\n"
             with open(self.csv_path, 'a') as f:
                 f.write(line)
         except Exception:
@@ -165,7 +166,10 @@ class GpsAlerter:
 
         # CSV log path and handler: append a row for every log entry
         try:
-            csv_path = Path.home() / "logs" / "starlink_gps_logs.csv"
+            from datetime import datetime
+            today_str = datetime.now().strftime("%Y-%m-%d")
+            csv_filename = f"starlink_gps_logs_{today_str}.csv"
+            csv_path = Path.home() / "logs" / csv_filename
             csv_handler = CsvLogHandler(csv_path, lambda: self)
             # Add the CSV handler to both loggers so any emitted record appends a CSV row
             self.logger.addHandler(csv_handler)
@@ -183,6 +187,8 @@ class GpsAlerter:
         self.starlink_lat = None
         self.starlink_lon = None
         self.max_distance_nm = 0.0
+        # Speed Over Ground (SOG)
+        self.sog = None
 
         # Timestamps for data loss detection
         self.last_gps_update_time = None
@@ -259,7 +265,8 @@ class GpsAlerter:
         """Sends the subscription message to the Signal K server."""
         msg = {
             "context": "vessels.self",
-            "subscribe": [{"path": "navigation.position", "policy": "instant"}]
+            "subscribe": [{"path": "navigation.position", "policy": "instant"},
+                          {"path": "navigation.speedOverGround", "policy": "instant"}]
         }
         await websocket.send(json.dumps(msg))
         self.logger.info("Subscribed to navigation.position updates.")
@@ -268,34 +275,40 @@ class GpsAlerter:
         """Parses a JSON message from the websocket."""
         try:
             data = json.loads(message)
+            # print(f"Received message: {data}")  # Debug print for incoming messages
             if "updates" not in data:
                 return
 
             for update in data["updates"]:
                 # GPS data from NMEA2000
                 if dict_digger.dig(update, "source", "type") == "NMEA2000":
-                    if self.test_mode and self.test_state == "SUPPRESS_GPS":
-                        continue # Skip processing this update
-                    
-                    lat = dict_digger.dig(update, "values", 0, "value", "latitude")
-                    lon = dict_digger.dig(update, "values", 0, "value", "longitude")
-
-                    if lat is not None and lon is not None:
-                        if self.test_mode:
-                            # Apply offsets during test mode
-                            if self.test_state == "RAMP_LAT_UP":
-                                self.gps_lat_offset += self.offset_increment
-                            elif self.test_state == "RAMP_LAT_DOWN":
-                                self.gps_lat_offset -= self.offset_increment
-                            elif self.test_state == "RAMP_LON_UP":
-                                self.gps_lon_offset += self.offset_increment
-                            elif self.test_state == "RAMP_LON_DOWN":
-                                self.gps_lon_offset -= self.offset_increment
-                            lat += self.gps_lat_offset
-                            lon += self.gps_lon_offset
-                        
-                        self._update_gps_position(lat, lon)
-
+                    values = update.get("values", [])
+                    if not values:
+                        continue
+                    # Check for navigation.position
+                    if values[0].get("path") == "navigation.position":
+                        if self.test_mode and self.test_state == "SUPPRESS_GPS":
+                            continue # Skip processing this update
+                        lat = dict_digger.dig(update, "values", 0, "value", "latitude")
+                        lon = dict_digger.dig(update, "values", 0, "value", "longitude")
+                        if lat is not None and lon is not None:
+                            if self.test_mode:
+                                # Apply offsets during test mode
+                                if self.test_state == "RAMP_LAT_UP":
+                                    self.gps_lat_offset += self.offset_increment
+                                elif self.test_state == "RAMP_LAT_DOWN":
+                                    self.gps_lat_offset -= self.offset_increment
+                                elif self.test_state == "RAMP_LON_UP":
+                                    self.gps_lon_offset += self.offset_increment
+                                elif self.test_state == "RAMP_LON_DOWN":
+                                    self.gps_lon_offset -= self.offset_increment
+                                lat += self.gps_lat_offset
+                                lon += self.gps_lon_offset
+                            self._update_gps_position(lat, lon)
+                    # Check for navigation.speedOverGround
+                    elif values[0].get("path") == "navigation.speedOverGround":
+                        sog = values[0].get("value")
+                        self._update_sog(sog)
                 # Starlink data
                 elif dict_digger.dig(update, "$source") == "signalk-starlink":
                     if self.test_mode and self.test_state == "SUPPRESS_STARLINK":
@@ -310,6 +323,10 @@ class GpsAlerter:
             self.logger.warning(f"Could not decode JSON message: {message}")
         except Exception as e:
             self.logger.error(f"Error processing message: {e}", exc_info=True)
+
+    def _update_sog(self, sog):
+        """Updates the state with a new Speed Over Ground value."""
+        self.sog = sog
 
     def _update_gps_position(self, lat, lon):
         """Updates the state with a new GPS position."""
@@ -368,11 +385,11 @@ class GpsAlerter:
         if self.last_position_log_time is None or (now - self.last_position_log_time) >= 60:
             # Update maximum distance seen
             self.max_distance_nm = max(self.max_distance_nm, distance_nm)
-            
+            sog_str = f", SOG: {self.sog}" if self.sog is not None else ""
             log_msg = (
                 f"Starlink Position: {abs(slink_lat_deg)}° {slink_lat_min:.3f}' {lat_hemisphere}, "
                 f"{abs(slink_lon_deg)}° {slink_lon_min:.3f}' {lon_hemisphere}. "
-                f"GPS delta: {distance_nm:.3f} NM (max: {self.max_distance_nm:.3f} NM)"
+                f"GPS delta: {distance_nm:.3f} NM (max: {self.max_distance_nm:.3f} NM){sog_str}"
             )
             self.logger.info(log_msg)
             self.last_position_log_time = now

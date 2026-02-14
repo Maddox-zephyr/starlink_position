@@ -4,6 +4,12 @@ This directory contains a file called diff_starlink_gps.py. It currently reads b
 It compares the two position sources and prints the difference between them,
 along with the current Starlink position.
 
+# Document Status
+
+This document has received a moderate amount of updating over time.
+It generally reflects the design and intent of the program, but it
+may not be accurate or complete.
+
 # High-level objectives
 
 I want to add an alerting capability, which will write a log entry when
