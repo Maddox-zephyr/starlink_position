@@ -63,7 +63,12 @@ class CsvLogHandler(logging.Handler):
     """Logging handler that appends a CSV row for each emitted log record.
 
     The handler calls a provided callback to get an object with attributes
-    `start_time`, `starlink_lat`, `starlink_lon`, `gps_lat`, `gps_lon`.
+    `start_time`, `starlink_lat`, `starlink_lon`, `chartplotter_gps_lat`, 
+        'chartplotter_gps_lon`.
+
+        src 5 is chart plotter
+        src 22 is AIS
+        src 178 is DataHub
     """
     def __init__(self, csv_path, get_context):
         super().__init__()
@@ -79,7 +84,7 @@ class CsvLogHandler(logging.Handler):
         if not self.csv_path.exists():
             try:
                 with open(self.csv_path, 'a') as f:
-                    f.write('date-time,slink_lat_min,slink_lon_min,gps_lat_min,gps_lon_min,diff_nm,sog\n')
+                    f.write('date-time,slink_lat_minutes,slink_lon_minutes,chplot_lat_minutes,chplot_lon_minutes,datahub_lat_minutes,datahub_lon_minutes,chplot_datahub_diff_nm,diff_nm,sog\n')
             except Exception:
                 pass
 
@@ -105,26 +110,38 @@ class CsvLogHandler(logging.Handler):
 
             slat = get_minutes(getattr(ctx, 'starlink_lat', None))
             slon = get_minutes(getattr(ctx, 'starlink_lon', None))
-            glat = get_minutes(getattr(ctx, 'gps_lat', None))
-            glon = get_minutes(getattr(ctx, 'gps_lon', None))
+            glat = get_minutes(getattr(ctx, 'gps_chartplotter_lat', None))
+            glon = get_minutes(getattr(ctx, 'gps_chartplogger_lon', None))
+            dhlat = get_minutes(getattr(ctx, 'datahub_lat', None))
+            dhlon = get_minutes(getattr(ctx, 'datahub_lon', None))
 
             # Try to get the current distance_nm from the context (GpsAlerter)
             diff_nm = ''
+            ch_dh_diff = ''
             if ctx is not None:
                 try:
                     # If distance_nm is not a property, recompute if possible
                     diff_nm_val = getattr(ctx, 'distance_nm', None)
                     if diff_nm_val is None:
-                        # Try to compute if all values present
-                        if all([getattr(ctx, 'gps_lat', None), getattr(ctx, 'gps_lon', None), getattr(ctx, 'starlink_lat', None), getattr(ctx, 'starlink_lon', None)]):
-                            diff_nm_val = haversine(ctx.gps_lat, ctx.gps_lon, ctx.starlink_lat, ctx.starlink_lon)
+                        # Try to compute if all values present for starlink vs chartplotter
+                        if all([getattr(ctx, 'gps_chartplotter_lat', None), getattr(ctx, 'gps_chartplogger_lon', None), getattr(ctx, 'starlink_lat', None), getattr(ctx, 'starlink_lon', None)]):
+                            diff_nm_val = haversine(ctx.gps_chartplotter_lat, ctx.gps_chartplogger_lon, ctx.starlink_lat, ctx.starlink_lon)
                     if diff_nm_val is not None:
                         diff_nm = f"{diff_nm_val:.3f}"
+
+                    # Compute chartplotter <-> DataHub difference if possible
+                    try:
+                        if all([getattr(ctx, 'gps_chartplotter_lat', None), getattr(ctx, 'gps_chartplogger_lon', None), getattr(ctx, 'datahub_lat', None), getattr(ctx, 'datahub_lon', None)]):
+                            chdh_val = haversine(ctx.gps_chartplotter_lat, ctx.gps_chartplogger_lon, ctx.datahub_lat, ctx.datahub_lon)
+                            ch_dh_diff = f"{chdh_val:.3f}"
+                    except Exception:
+                        ch_dh_diff = ''
                 except Exception:
                     pass
 
             sog = getattr(ctx, 'sog', '') if ctx is not None else ''
-            line = f"{timestamp},{slat},{slon},{glat},{glon},{diff_nm},{sog}\n"
+            sog = f"{sog:.1f}" if isinstance(sog, (int, float)) else ''
+            line = f"{timestamp},{slat},{slon},{glat},{glon},{dhlat},{dhlon},{ch_dh_diff},{diff_nm},{sog}\n"
             with open(self.csv_path, 'a') as f:
                 f.write(line)
         except Exception:
@@ -168,7 +185,7 @@ class GpsAlerter:
         try:
             from datetime import datetime
             today_str = datetime.now().strftime("%Y-%m-%d")
-            csv_filename = f"starlink_gps_logs_{today_str}.csv"
+            csv_filename = f"position_log_data_{today_str}.csv"
             csv_path = Path.home() / "logs" / csv_filename
             csv_handler = CsvLogHandler(csv_path, lambda: self)
             # Add the CSV handler to both loggers so any emitted record appends a CSV row
@@ -182,8 +199,10 @@ class GpsAlerter:
         self.alert_file = Path.home() / "logs" / "starlink_gps_alerts.txt"
 
         # Position data
-        self.gps_lat = None
-        self.gps_lon = None
+        self.gps_chartplotter_lat = None
+        self.gps_chartplogger_lon = None
+        self.datahub_lat = None
+        self.datahub_lon = None
         self.starlink_lat = None
         self.starlink_lon = None
         self.max_distance_nm = 0.0
@@ -272,7 +291,12 @@ class GpsAlerter:
         self.logger.info("Subscribed to navigation.position updates.")
 
     def _process_message(self, message):
-        """Parses a JSON message from the websocket."""
+        """Parses a JSON message from the websocket.
+        src 5 is chart plotter
+        src 22 is AIS
+        src 178 is DataHub
+        """
+        debug_print = False
         try:
             data = json.loads(message)
             # print(f"Received message: {data}")  # Debug print for incoming messages
@@ -280,35 +304,67 @@ class GpsAlerter:
                 return
 
             for update in data["updates"]:
+                # print(f"Received message: {update}")  # Debug print for incoming messages
+
                 # GPS data from NMEA2000
                 if dict_digger.dig(update, "source", "type") == "NMEA2000":
-                    values = update.get("values", [])
-                    if not values:
-                        continue
-                    # Check for navigation.position
-                    if values[0].get("path") == "navigation.position":
-                        if self.test_mode and self.test_state == "SUPPRESS_GPS":
-                            continue # Skip processing this update
-                        lat = dict_digger.dig(update, "values", 0, "value", "latitude")
-                        lon = dict_digger.dig(update, "values", 0, "value", "longitude")
-                        if lat is not None and lon is not None:
-                            if self.test_mode:
-                                # Apply offsets during test mode
-                                if self.test_state == "RAMP_LAT_UP":
-                                    self.gps_lat_offset += self.offset_increment
-                                elif self.test_state == "RAMP_LAT_DOWN":
-                                    self.gps_lat_offset -= self.offset_increment
-                                elif self.test_state == "RAMP_LON_UP":
-                                    self.gps_lon_offset += self.offset_increment
-                                elif self.test_state == "RAMP_LON_DOWN":
-                                    self.gps_lon_offset -= self.offset_increment
-                                lat += self.gps_lat_offset
-                                lon += self.gps_lon_offset
-                            self._update_gps_position(lat, lon)
-                    # Check for navigation.speedOverGround
-                    elif values[0].get("path") == "navigation.speedOverGround":
-                        sog = values[0].get("value") * 1.94384 # Convert m/s to knots
-                        self._update_sog(sog)
+                    # Check for PGN 129025 (position) and src 5 (chart plotter)
+                    pgn = dict_digger.dig(update, "source", "pgn")
+                    src = dict_digger.dig(update, "source", "src")
+                    
+                    # Handle position data (PGN 129025)
+                    if pgn == 129025 and src == '5':
+                        values = update.get("values", [])
+                        if not values:
+                            continue
+                        # Check for navigation.position
+                        if values[0].get("path") == "navigation.position":
+                            if self.test_mode and self.test_state == "SUPPRESS_GPS":
+                                continue # Skip processing this update
+                            lat = dict_digger.dig(update, "values", 0, "value", "latitude")
+                            lon = dict_digger.dig(update, "values", 0, "value", "longitude")
+                            if lat is not None and lon is not None:
+                                if self.test_mode:
+                                    # Apply offsets during test mode
+                                    if self.test_state == "RAMP_LAT_UP":
+                                        self.gps_lat_offset += self.offset_increment
+                                    elif self.test_state == "RAMP_LAT_DOWN":
+                                        self.gps_lat_offset -= self.offset_increment
+                                    elif self.test_state == "RAMP_LON_UP":
+                                        self.gps_lon_offset += self.offset_increment
+                                    elif self.test_state == "RAMP_LON_DOWN":
+                                        self.gps_lon_offset -= self.offset_increment
+                                    lat += self.gps_lat_offset
+                                    lon += self.gps_lon_offset
+                                self._update_gps_position(lat, lon)
+                                if (debug_print):
+                                    print(f"Received message: {data}")  # Debug print for incoming messages
+                                    print("Values:", values)  # Debug print for values in the update
+                    
+                    # Handle Speed Over Ground (PGN 129026)
+                    elif pgn == 129026 and src == '5':
+                        values = update.get("values", [])
+                        if values and values[0].get("path") == "navigation.speedOverGround":
+                            sog = float(values[0].get("value")) * 1.94384 # Convert m/s to knots
+                            self._update_sog(sog)
+                            if (debug_print):
+                                print(f"Received message: {data}")  # Debug print for incoming messages
+                                print("SOG updated:", sog)  # Debug print for SOG updates
+
+                    # Handle DataHub position (PGN 129025 from src 178)
+                    elif pgn == 129025 and src == '178':
+                        values = update.get("values", [])
+                        if not values:
+                            continue
+                        if values[0].get("path") == "navigation.position":
+                            lat = dict_digger.dig(update, "values", 0, "value", "latitude")
+                            lon = dict_digger.dig(update, "values", 0, "value", "longitude")
+                            if lat is not None and lon is not None:
+                                self.datahub_lat = lat
+                                self.datahub_lon = lon
+                                if (debug_print):
+                                    print(f"Received message: {data}")
+                                    print("DataHub Values:", values)
                 # Starlink data
                 elif dict_digger.dig(update, "$source") == "signalk-starlink":
                     if self.test_mode and self.test_state == "SUPPRESS_STARLINK":
@@ -318,6 +374,9 @@ class GpsAlerter:
                     lon = dict_digger.dig(update, "values", 0, "value", "longitude")
                     if lat is not None and lon is not None:
                         self._update_starlink_position(lat, lon)
+                        if (debug_print):
+                            print(f"Received message: {data}")  # Debug print for incoming messages
+                            print(f"Starlink position updated: lat={lat}, lon={lon}")  # Debug print for Starlink updates
 
         except json.JSONDecodeError:
             self.logger.warning(f"Could not decode JSON message: {message}")
@@ -336,8 +395,8 @@ class GpsAlerter:
             self._write_alert_to_file(msg)
             self.gps_data_lost = False
 
-        self.gps_lat = lat
-        self.gps_lon = lon
+        self.gps_chartplotter_lat = lat
+        self.gps_chartplogger_lon = lon
         self.last_gps_update_time = time.monotonic()
 
     def _update_starlink_position(self, lat, lon):
@@ -370,10 +429,10 @@ class GpsAlerter:
 
     def _check_position_difference(self):
         """Checks for position differences and logs/alerts if the state changes."""
-        if not all([self.gps_lat, self.gps_lon, self.starlink_lat, self.starlink_lon]):
+        if not all([self.gps_chartplotter_lat, self.gps_chartplogger_lon, self.starlink_lat, self.starlink_lon]):
             return  # Not enough data to compare
 
-        distance_nm = haversine(self.gps_lat, self.gps_lon, self.starlink_lat, self.starlink_lon)
+        distance_nm = haversine(self.gps_chartplotter_lat, self.gps_chartplogger_lon, self.starlink_lat, self.starlink_lon)
 
         slink_lat_deg, slink_lat_min = dd_to_dm(self.starlink_lat)
         slink_lon_deg, slink_lon_min = dd_to_dm(self.starlink_lon)
@@ -385,7 +444,7 @@ class GpsAlerter:
         if self.last_position_log_time is None or (now - self.last_position_log_time) >= 60:
             # Update maximum distance seen
             self.max_distance_nm = max(self.max_distance_nm, distance_nm)
-            sog_str = f", SOG: {self.sog}" if self.sog is not None else ""
+            sog_str = f", SOG: {self.sog:.1f}" if self.sog is not None else ""
             log_msg = (
                 f"Starlink Position: {abs(slink_lat_deg)}° {slink_lat_min:.3f}' {lat_hemisphere}, "
                 f"{abs(slink_lon_deg)}° {slink_lon_min:.3f}' {lon_hemisphere}. "
@@ -458,7 +517,7 @@ class GpsAlerter:
         """Runs a sequence of test scenarios to trigger alerts."""
         # Wait for the system to receive initial data from both sources
         self.logger.info("Test runner waiting for initial GPS and Starlink data...")
-        while not all([self.gps_lat, self.starlink_lat]):
+        while not all([self.gps_chartplotter_lat, self.starlink_lat]):
             await asyncio.sleep(1)
         self.logger.info("Test runner detected initial data. Starting test sequence in 5 seconds.")
         await asyncio.sleep(5)
