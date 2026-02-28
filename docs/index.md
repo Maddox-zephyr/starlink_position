@@ -18,6 +18,12 @@ Starlink Datahub GPS positioning discussion have joined and likely missed
 some of the earlier messages. This website is intended as a reference
 to bring them up to speed.
 
+# License
+
+The repo from which this documentation is generated as well as the contents
+of this website are licensed under "The Unlicense", reproduced
+[here](LICENSE.html)
+
 # Why is Starlink more resilient in a degraded GPS environment
 
 Starlink’s ability to operate in degraded or "GPS-denied" environments is a significant area of 
